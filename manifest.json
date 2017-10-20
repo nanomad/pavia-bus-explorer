@@ -1,0 +1,6 @@
+{
+  "name": "pavia-bus-explorer",
+  "short_name": "pavia-bus-explorer",
+  "start_url": "/",
+  "display": "standalone"
+}

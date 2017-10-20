@@ -1,0 +1,104 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/iron-list/iron-list.html">
+<link rel="import" href="/bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="/bower_components/app-storage/app-localstorage/app-localstorage-document.html">
+<link rel="import" href="./stop-summary.html">
+
+<dom-module id="stops-list">
+  <template>
+    <style>
+      iron-list {
+        padding-bottom: 16px;
+      }
+
+      .content {
+        @apply --layout-vertical;
+      }
+
+      .loading {
+        @apply --layout;
+        @apply --layout-center-center;
+      }
+    </style>
+    <div class="content">
+      <template is="dom-if" if="[[!stops.data]]">
+        <div class="loading">
+          <paper-spinner active></paper-spinner>
+        </div>
+      </template>
+      <iron-list items="[[_applyFilter(stops.data.*, query)]]" as="item" scroll-target="document">
+        <template>
+          <stop-summary stop="[[item]]"></stop-summary>
+        </template>
+      </iron-list>
+    </div>
+    <iron-ajax auto params="[[params]]" handle-as="json" url="http://bs.lineservizi.it/RTPI/PAVIA" last-response="{{stops}}"></iron-ajax>
+
+    <app-localstorage-document key="source" data="{{source}}">
+    </app-localstorage-document>
+
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class StopsList extends Polymer.Element {
+      static get is() {
+        return 'stops-list';
+      }
+
+      static get properties() {
+        return {
+          stops: {
+            type: Object,
+            observer: "stopsChanged"
+          },
+          params: {
+            type: Object,
+            value: this.defaultParams("", 0, "GETTARGETS")
+          },
+          query: {
+            type: String,
+          },
+          source: {
+            type: String,
+            value: ""
+          }
+        };
+      }
+
+      static defaultParams(source, destination, type) {
+        let data = `{source: "${source}", destination: ${destination}, type: ${type}}`;
+        console.log(data);
+        return {
+          data: data,
+          _: new Date().getTime()
+        };
+      }
+
+      stopsChanged(stops) {
+        if (stops) {
+          this.source = stops.source;
+          /* this.params = this.defaultParams(this.source, 0, "GETTARGETS"); */
+        }
+      }
+
+      _applyFilter(stops, query) {
+        if (stops.value) {
+          return stops.value.filter((x) => {
+            return x.Name.toLowerCase().indexOf(query.toLowerCase()) != -1;
+          });
+        }
+      }
+
+
+    }
+
+    window.customElements.define(StopsList.is, StopsList);
+  </script>
+</dom-module>

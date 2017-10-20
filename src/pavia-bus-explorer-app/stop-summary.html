@@ -1,0 +1,71 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+
+<dom-module id="stop-summary">
+  <template>
+    <style>
+      .item {
+        @apply --layout-vertical;
+        margin: 8px 8px 0 8px;
+        padding: 8px;
+        border-radius: 5px;
+        background-color: white;
+        border: 1px solid #ddd;
+      }
+
+
+      paper-icon-button {
+        color: #ddd;
+      }
+
+      paper-icon-button[toggles][active] {
+        color: goldenrod;
+      }
+
+      h4 {
+        @apply --layout-horizontal;
+        @apply --layout-center;
+      }
+
+      a {
+        color: var(--color-primary-text);
+        text-decoration: none;
+      }
+    </style>
+    <paper-card class="item">
+      <h4>
+          <paper-icon-button icon="star" toggles></paper-icon-button>
+          <a href="#/view/[[stop.Identifiers]]">[[stop.Name]]</a>
+      </h4>
+    </paper-card>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class StopSummary extends Polymer.Element {
+      static get is() {
+        return 'stop-summary';
+      }
+
+      static get properties() {
+        return {
+          stop: {
+            type: Object,
+          },
+          color: {
+            type: String,
+            value: "#ddd"
+          }
+        };
+      }
+    }
+
+    window.customElements.define(StopSummary.is, StopSummary);
+  </script>
+</dom-module>

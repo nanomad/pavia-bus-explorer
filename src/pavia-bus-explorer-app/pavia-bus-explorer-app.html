@@ -1,0 +1,71 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/bower_components/app-layout/app-layout.html">
+<link rel="import" href="/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="/bower_components/paper-styles/color.html" >
+<link rel="import" href="/bower_components/paper-search/paper-search.html">
+<link rel="import" href="/bower_components/app-route/app-route.html" >
+<link rel="import" href="/bower_components/app-route/app-location.html" >
+<link rel="import" href="/bower_components/iron-pages/iron-pages.html" >
+<link rel="import" href="./stops-list.html">
+<link rel="import" href="./stops-details.html">
+
+<dom-module id="pavia-bus-explorer-app">
+  <template>
+    <style>
+      app-header-layout {
+        background-color: var(--paper-grey-200, #eee);
+      }
+      app-header {
+        background-color: var(--paper-teal-300, #eee);
+        color: white;
+        --app-header-background-front-layer: {
+          background-color: var(--paper-teal-500, #eee);
+        }
+      }
+
+      paper-search-baapp-router {
+        color: black;
+      }
+
+      app-toolbar.tall {
+        height: 5vh;
+      }
+    </style>
+    <app-header-layout>
+      <app-header fixed effects="blend-background waterfall" slot="header">
+        <app-toolbar>
+          <h4 main-title>Orario Autobus Pavia</h4>
+        </app-toolbar>
+        <paper-search-bar placeholder="Fermata ..." hide-filter-button="true" query="{{query}}">
+          </paper-search-bar>  
+      </app-header>
+      <app-location route="{{route}}" use-hash-as-path></app-location>      
+      <app-route
+        route="{{route}}"
+        pattern="/:view"
+        data="{{routeData}}"
+        tail="{{subroute}}",>
+      </app-route>
+      <iron-pages selected="[[routeData.view]]" attr-for-selected="name" fallback-selection="home">        
+        <stops-list name="home" query="[[query]]"></stops-list>
+        <stops-details name="view" identifiers="[[routeData]]"></stops-details>
+      </iron-pages>
+      </app-header-layout>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class PaviaBusExplorerApp extends Polymer.Element {
+      static get is() {
+        return 'pavia-bus-explorer-app';
+      }
+
+    }
+
+    window.customElements.define(PaviaBusExplorerApp.is, PaviaBusExplorerApp);
+  </script>
+</dom-module>

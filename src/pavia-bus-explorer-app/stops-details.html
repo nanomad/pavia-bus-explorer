@@ -1,0 +1,71 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+<link rel="import" href="/bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="/bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/iron-list/iron-list.html">
+<link rel="import" href="/bower_components/app-storage/app-localstorage/app-localstorage-document.html">
+
+<dom-module id="stops-details">
+  <template>
+    [[source]]
+    [[identifiers]]
+    <app-localstorage-document key="source" data="{{source}}">
+    </app-localstorage-document>
+    <iron-ajax id="xhr" params="[[params]]" handle-as="json" url="http://bs.lineservizi.it/RTPI/PAVIA" last-response="{{stops}}"></iron-ajax>
+  </template>
+
+  <script>
+    /**
+     * @customElement
+     * @polymer
+     */
+    class StopsDetails extends Polymer.Element {
+      static get is() {
+        return 'stops-details';
+      }
+
+      static get properties() {
+        return {
+          params: {
+            type: Object,
+          },
+          identifiers: {
+            type: Object,
+          },
+          source: {
+            type: String
+          },
+          stops: {
+            type: Object
+          }
+        }
+      }
+
+      static get observers() {
+        return  [
+          "__paramsChanged(identifiers, source)"
+        ]
+      }
+
+      defaultParams(source, destination, type, identifers) {
+        identifers
+        let data = `{source: "${source}", destination: ${destination}, type: ${type}, data:{parameters:[${identifiers.join(',')}]}}`;
+        return {
+          data: data,
+          _: new Date().getTime()
+        };
+      }
+
+      __paramsChanged(identifers, source) {
+        if(identifers.value && source) {
+          this.params = this.defaultParams(this.source, 0, "GETITINERARIES", this.identifers);
+          this.$.xhr.generateRequest();
+        }
+      }
+
+    }
+
+    window.customElements.define(StopsDetails.is, StopsDetails);
+  </script>
+</dom-module>
